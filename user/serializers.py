@@ -8,7 +8,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ["id", "email", "password", "is_staff"]
         read_only_fields = ["id", "is_staff"]
-        extra_kwargs = {"password": {"write_only": True, "min_length": 5, "style": {"input_type": "password"}, "label": "Password"}}
+        extra_kwargs = {
+            "password": {
+                "write_only": True,
+                "min_length": 5,
+                "style": {"input_type": "password"},
+                "label": "Password"}
+        }
 
     def create(self, validated_data):
         return get_user_model().objects.create_user(**validated_data)
@@ -26,7 +32,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 class AuthTokenSerializer(serializers.Serializer):
     email = serializers.CharField(label="Email", write_only=True)
-    password = serializers.CharField(label="Password", style={"input_type": "password"}, write_only=True, trim_whitespace=False)
+    password = serializers.CharField(
+        label="Password",
+        style={"input_type": "password"},
+        write_only=True,
+        trim_whitespace=False
+    )
     token = serializers.CharField(label="Token", read_only=True)
 
     def validate(self, attrs):
@@ -34,7 +45,11 @@ class AuthTokenSerializer(serializers.Serializer):
         password = attrs.get("password")
 
         if email and password:
-            user = authenticate(request=self.context.get("request"), email=email, password=password)
+            user = authenticate(
+                request=self.context.get("request"),
+                email=email,
+                password=password
+            )
 
             if not user:
                 msg = "Invalid credentials"
